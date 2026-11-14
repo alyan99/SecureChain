@@ -8,16 +8,23 @@
     "node1": "node src/api/server.js 3001",
     "node2": "node src/api/server.js 3002",
     "node3": "node src/api/server.js 3003",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "build:wallet": "esbuild ./client/wallet.js --bundle --format=iife --global-name=SecureChainWallet --outfile=public/wallet.js",
+    "pretest": "npm run build:wallet"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@noble/curves": "2.4.0",
     "express": "^5.3.0"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "jest": "^30.5.2"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   }
 }

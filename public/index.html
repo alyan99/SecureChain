@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SecureChain · Dashboard</title>
+<link rel="stylesheet" href="/dashboard/style.css">
+<script defer src="/dashboard/wallet.js"></script>
+<script defer src="/dashboard/app.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+<a class="brand" href="/dashboard/"><span class="brand-mark">S</span> SecureChain</a>
+<div class="sidebar-caption">WORKSPACE</div>
+<nav aria-label="Dashboard">
+<button class="nav active" data-page="overview">Overview</button>
+<button class="nav" data-page="wallets">Wallets</button>
+<button class="nav" data-page="explorer">Block explorer</button>
+<button class="nav" data-page="network">Peer network</button>
+<button class="nav" data-page="security">Security</button>
+</nav>
+<div class="sidebar-footer"><span class="dot"></span> Local development network<br><span id="node-origin" class="mono"></span></div>
+</aside>
+<main>
+<header><div><div class="eyebrow">SECURECHAIN NETWORK</div><h1 id="page-title">Overview</h1></div><div class="header-actions"><span id="connection" class="status">Connecting</span><button id="refresh" class="secondary">Refresh</button></div></header>
+<div id="notice" role="status" aria-live="polite" hidden></div>
+<section class="page" id="overview">
+<div class="stats">
+<article class="balance stat"><div class="label">Confirmed balance</div><div class="metric"><span id="balance">—</span> <small>SC</small></div><div id="balance-note" class="muted">Select a wallet to see your balance</div></article>
+<article class="stat"><div class="label">Block height</div><div class="metric" id="height">—</div><div class="muted">Locally validated history</div></article>
+<article class="stat"><div class="label">Pending transfers</div><div class="metric" id="pending-count">—</div><div class="muted">Awaiting confirmation</div></article>
+<article class="stat"><div class="label">Security alerts</div><div class="metric" id="alert-count">—</div><div class="muted">Recent activity signals</div></article>
+</div>
+<div class="two-col">
+<article class="panel"><div class="panel-heading"><h2>Send SecureCoins</h2><span id="wallet-state" class="tag">Locked</span></div>
+<form id="send-form"><label>From wallet<select id="wallet-select" aria-label="From wallet"><option value="">Select a wallet</option></select></label>
+<p id="selected-address" class="address muted">Create or import a wallet to get started.</p>
+<label>Recipient address<input id="receiver" required placeholder="SC_…" autocomplete="off" spellcheck="false" pattern="SC_[0-9a-f]{40}"></label>
+<div class="form-row"><label>Amount in SC<input id="amount" type="number" required min="1" step="1" placeholder="0"></label><label>Next nonce<input id="next-nonce" readonly value="—"></label></div>
+<button id="send-button" class="primary" disabled>Sign &amp; send</button>
+<p class="hint">Unlock your wallet in Wallets to sign a transfer locally.</p></form></article>
+<article class="panel"><div class="panel-heading"><h2>Network activity</h2><span class="tag">Proof of work</span></div>
+<div class="network-visual"><div class="orbit-node">SC</div><div><strong id="network-summary">Waiting for node</strong><p class="muted" id="tip-summary">Loading chain state…</p></div></div>
+<div class="detail-row"><span>Registered peers</span><strong id="peer-count">—</strong></div><div class="detail-row"><span>Mining difficulty</span><strong id="difficulty">—</strong></div>
+<div class="detail-row"><span>Node storage</span><strong id="database-state">—</strong></div>
+<div class="detail-row"><span>Last updated</span><strong id="updated">—</strong></div>
+<button id="mine" class="secondary full">Mine pending transfers</button><p class="hint">Creates a block on this node and broadcasts it to peers.</p></article>
+</div>
+<article class="panel"><div class="panel-heading"><h2>Transaction history</h2><label class="inline-label"><input type="checkbox" id="only-wallet"> Selected wallet only</label></div>
+<div class="table-scroll"><table><thead><tr><th>Status</th><th>Sender → recipient</th><th>Amount</th><th>Nonce</th><th>Block</th></tr></thead><tbody id="history"></tbody></table></div></article>
+</section>
+<section class="page" id="wallets" hidden>
+<div class="two-col"><article class="panel"><h2>Local wallets</h2><p class="muted">Wallet files are encrypted with your password. Keep an encrypted backup before clearing browser data.</p><div id="wallet-list"></div><button id="export-genesis" class="secondary full">Export genesis allocations</button><p class="hint">Exports 1,000 SC per saved wallet for a fresh demonstration chain. Set GENESIS_FILE on all nodes before their first startup.</p></article>
+<article class="panel"><h2>Create a wallet</h2><form id="create-wallet"><label>Wallet name<input id="wallet-name" required maxlength="40" placeholder="My wallet"></label><label>Password<input id="create-password" type="password" minlength="12" required autocomplete="new-password"></label><button class="primary">Create encrypted wallet</button></form>
+<hr><h2>Import an encrypted wallet</h2><label>Wallet file<input id="import-wallet" type="file" accept=".json,application/json"></label>
+<hr><h2>Unlock selected wallet</h2><form id="unlock-wallet"><label>Password<input id="unlock-password" type="password" required autocomplete="current-password"></label><div class="button-row"><button class="primary">Unlock</button><button id="lock-wallet" type="button" class="secondary">Lock</button></div></form><p class="hint">Unlocked wallets lock after five minutes, when you switch wallets, or when you leave this tab.</p></article></div>
+</section>
+<section class="page" id="explorer" hidden><article class="panel"><div class="panel-heading"><h2>Blockchain explorer</h2><span id="block-total" class="tag"></span></div><div id="blocks"></div></article></section>
+<section class="page" id="network" hidden><div class="two-col"><article class="panel"><h2>Connect a peer</h2><form id="peer-form"><label>Peer URL<input id="peer-url" type="url" required placeholder="http://127.0.0.1:3002"></label><button class="primary">Connect peer</button></form><button id="sync" class="secondary full spaced">Synchronize chain</button></article><article class="panel"><h2>Peer status</h2><div id="peer-list"></div></article></div></section>
+<section class="page" id="security" hidden><article class="panel"><div class="panel-heading"><h2>Security activity</h2><label class="inline-label">Severity<select id="severity" aria-label="Severity"><option value="">All levels</option><option>high</option><option>medium</option><option>low</option></select></label></div><p class="muted">Alerts flag suspicious activity. Rejected attempts indicate a validation rule was triggered.</p><div id="log-error" role="alert"></div><div id="security-list"></div></article>
+<article class="panel"><h2>Detection thresholds</h2><form id="threshold-form" class="thresholds"><label>Large transfer (SC)<input id="large-threshold" type="number" min="1" step="1" required></label><label>Transfers per window<input id="frequency-threshold" type="number" min="1" step="1" required></label><label>Window (milliseconds)<input id="window-threshold" type="number" min="1" step="1" required></label><button class="primary">Save thresholds</button></form></article></section>
+<footer>SecureChain <span>Custom blockchain · secp256k1 signatures</span></footer>
+</main>
+</body></html>
+
+
